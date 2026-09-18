@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Meter & Letter</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 320px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Sticker container styling */
+    .sticker-box {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 15px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sticker-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    h2 {
+      color: #d81b60;
+      font-size: 20px;
+      margin-bottom: 25px;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      position: relative;
+      height: 50px;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-yes {
+      background-color: #ff4081;
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+    }
+
+    .btn-no {
+      background-color: #e0e0e0;
+      color: #666;
+      position: absolute;
+      left: 160px;
+    }
+
+    /* Meter Screen */
+    .meter-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .status-text {
+      color: #d81b60;
+      font-size: 16px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .percentage {
+      font-size: 32px;
+      font-weight: bold;
+      color: #d81b60;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background-color: #f8bbd0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(to right, #ff80ab, #ff4081);
+      transition: width 0.1s linear;
+    }
+
+    /* Letter Screen */
+    .letter-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .letter-box {
+      background: #fff0f5;
+      border: 2px dashed #ff4081;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .letter-title {
+      color: #d81b60;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    /* Floating Hearts Animation */
+    .heart {
+      position: absolute;
+      color: #ff4081;
+      font-size: 20px;
+      animation: floatUp 3s linear infinite;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Step 1: Question Card -->
+  <div class="card" id="step1">
+    <div class="sticker-box">
+      <!-- မေးခွန်းမေးချိန် ပေါ်မယ့် စတေကာ -->
+      <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbm94OHJxbDF3aXBmdTFzYmxmYmRtdnl3ZW4zcTgxYnh2OHlyejZqciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute Sticker 1">
+    </div>
+    <h2>ကိုတို့ ဆိုင်ကယ်ပတ်စီး ကြမလား? 🥺</h2>
+    <div class="btn-container">
+      <button class="btn btn-yes" onclick="startLoveMeter()">♥ YES</button>
+      <button class="btn btn-no" id="noBtn" onmouseover="moveNoBtn()" onclick="moveNoBtn()" ontouchstart="moveNoBtn()">✕ NO</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Love Meter -->
+  <div class="card meter-container" id="step2">
+    <div class="sticker-box">
+      <!-- သင်တောင်းဆိုထားသော စတေကာ -->
+      <img src="https://media1.tenor.com/m/LjTMbRkqYHEAAAAC/nanip50.gif" alt="Selected Sticker">
+    </div>
+    <div class="status-text" id="statusText">ဘေဘီလေးနဲ့ဘုရားသွားမယ် 🌸</div>
+    <div class="percentage" id="percentText">0%</div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- Step 3: Letter -->
+  <div class="card letter-container" id="step3">
+    <div class="sticker-box">
+      <!-- စာလွှာပြချိန် ပေါ်မယ့် စတေကာ -->
+      <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Y5dzE5eGRqMG05M2c4cXRxeWNzeGNrN2U5bXdhMmF2NzBwcmprOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/KztT2c4u8mYYUiMKdJ/giphy.gif" alt="Cute Sticker 3">
+    </div>
+    <h2 style="margin-bottom: 10px;">❤️ အားးးး များကြီးချစ်တယ် ကွာ . ❤️</h2>
+    <p style="color: #ff4081; margin-bottom: 15px;">I love you 1000%</p>
+    
+    <div class="letter-box">
+      <div class="letter-title">Dear Special Someone, 💖</div>
+      <p>ရေ....... ဘေဘီလက်ခံမှာသိသားပဲ. များကြီးချစ်တယ်နော် အာဘွား</p>
+      <p style="margin-top: 10px; font-weight: bold; color: #d81b60; text-align: right;">Forever Yours 💕</p>
+    </div>
+  </div>
+
+  <script>
+    // NO Button Run Away Function
+    const noBtn = document.getElementById('noBtn');
+
+    function moveNoBtn() {
+      const x = Math.random() * 200 - 100;
+      const y = Math.random() * 140 - 70;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    // Love Meter Function
+    function startLoveMeter() {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'flex';
+
+      let count = 0;
+      const percentText = document.getElementById('percentText');
+      const progressBar = document.getElementById('progressBar');
+      const statusText = document.getElementById('statusText');
+
+      const interval = setInterval(() => {
+        count += 15;
+
+        if (count > 1000) {
+          count = 1000;
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'flex';
+            createHearts();
+          }, 800);
+        }
+
+        percentText.innerText = count + '%';
+        
+        if (count < 300) {
+          statusText.innerText = "ဘေဘီလေးနဲ့ဘုရားသွားမယ် 🌸";
+          progressBar.style.width = (count / 10) + '%';
+        } else if (count < 700) {
+          statusText.innerText = "ပြည့်ပါပြီဗျာ ✨";
+          progressBar.style.width = '70%';
+        } else if (count < 900) {
+          statusText.innerText = "ချစ်ခြင်းတွေ ပြည့်လျှံနေပြီ 💥";
+          progressBar.style.width = '90%';
+        } else {
+          statusText.innerText = "OVERFLOWING WITH LOVE! 1000% 💖";
+          progressBar.style.width = '100%';
+        }
+
+      }, 50);
+    }
+
+    // Background Floating Hearts
+    function createHearts() {
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = '💖';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }, 300);
+    }
+  </script>
+</body>
+</html>
